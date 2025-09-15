@@ -328,6 +328,29 @@ long filter(Instance inst) {
             }
 			return 0; // Return 0 if no negative Baseball Card is found
         }
+        case customFilters::JIMBO: {
+           if (jimbo) {
+                return 1; // Return a score of 1 if a negative blueprint is found
+            }
+            Pack pack = packInfo(inst.nextPack(1));
+            for (int p = 0; p <= 2; p++) {
+                if (pack.type == Item::Buffoon_Pack || pack.type == Item::Jumbo_Buffoon_Pack || pack.type == Item::Mega_Buffoon_Pack) {
+                    auto packContents = inst.nextBuffoonPack(pack.size, 1);
+                    for (int x = 0; x < pack.size; x++) {
+                        if (packContents[x].joker == Item::Joker && packContents[x].edition == Item::Eternal) {
+                            jimbo = true;
+                            break;
+                        }
+                    }
+                }
+                pack = packInfo(inst.nextPack(1));
+            }
+            if (jimbo) {
+                return 1; // Return a score of 1 if an eternal jimbo is found
+            }
+
+            return 0; // Return 0 if no eternal jimbo is found 
+        }
         default:
             return 1;
     }
